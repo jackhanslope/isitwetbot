@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -9,21 +10,35 @@ import (
 	"os"
 )
 
+type WeatherForecast struct {
+	Summary    Summary
+	Link       string
+	MobileLink string
+}
+
+type Summary struct {
+	Phrase string
+	Type   string
+	TypeId int
+}
+
 func main() {
 	var err error
+	var currentForecast WeatherForecast
 
-	message := "Yes, it's probably wet"
 	telegramToken := os.Getenv("TELEGRAM_TOKEN")
 	chat_id := os.Getenv("CHAT_ID")
 	accuweatherToken := os.Getenv("ACCUWEATHER_TOKEN")
+	weatherUrl := os.Getenv("WEATHER_URL")
 
-	if err = sendMessage(message, telegramToken, chat_id); err != nil {
+	if currentForecast, err = getWeather(weatherUrl, accuweatherToken); err != nil {
 		log.Println(err)
 	}
 
-	if err = getWeather(accuweatherToken); err != nil {
+	if err = sendMessage(currentForecast.Summary.Phrase, telegramToken, chat_id); err != nil {
 		log.Println(err)
 	}
+
 }
 
 func sendMessage(message string, token string, chat_id string) (err error) {
@@ -36,8 +51,7 @@ func sendMessage(message string, token string, chat_id string) (err error) {
 	return
 }
 
-func getWeather(token string) (err error) {
-	weatherUrl := "http://dataservice.accuweather.com/forecasts/v1/minute?"
+func getWeather(weatherUrl string, token string) (currentForecast WeatherForecast, err error) {
 	v := url.Values{}
 	v.Set("q", "51.46,-2.6")
 	v.Set("apikey", token)
@@ -55,7 +69,12 @@ func getWeather(token string) (err error) {
 
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
-	fmt.Println(string(body))
+
+	if err != nil {
+		return
+	}
+
+	err = json.Unmarshal(body, &currentForecast)
 
 	return
 }
