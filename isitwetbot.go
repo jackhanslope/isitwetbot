@@ -12,10 +12,10 @@ func main() {
 	var err error
 
 	message := "Yes, it's probably wet"
-	token := os.Getenv("TELEGRAM_TOKEN")
+	telegramToken := os.Getenv("TELEGRAM_TOKEN")
 	chat_id := os.Getenv("CHAT_ID")
 
-	if err = sendMessage(message, token, chat_id); err != nil {
+	if err = sendMessage(message, telegramToken, chat_id); err != nil {
 		log.Println(err)
 	}
 }
