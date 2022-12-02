@@ -1,0 +1,19 @@
+{
+  "Summary": {
+    "Phrase": "How should I know",
+    "Type": null,
+    "TypeId": 0
+  },
+  "Summaries": [
+    {
+      "StartMinute": 0,
+      "EndMinute": 119,
+      "CountMinute": 120,
+      "MinuteText": "No precipitation for at least %MINUTE_VALUE min",
+      "Type": null,
+      "TypeId": 0
+    }
+  ],
+  "Link": "http://www.accuweather.com/en/gb/bristol/bs1-6/minute-weather-forecast/327328?lang=en-gb&lat=51.46&lon=-2.6",
+  "MobileLink": "http://www.accuweather.com/en/gb/bristol/bs1-6/minute-weather-forecast/327328?lang=en-gb&lat=51.46&lon=-2.6"
+}
