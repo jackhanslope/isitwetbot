@@ -29,7 +29,10 @@ func main() {
 	telegramToken := os.Getenv("TELEGRAM_TOKEN")
 	chat_id := os.Getenv("CHAT_ID")
 	accuweatherToken := os.Getenv("ACCUWEATHER_TOKEN")
-	weatherUrl := os.Getenv("WEATHER_URL")
+	weatherUrl, ok := os.LookupEnv("WEATHER_URL")
+	if !ok {
+		weatherUrl = "http://dataservice.accuweather.com/forecasts/v1/minute?"
+	}
 
 	if currentForecast, err = getWeather(weatherUrl, accuweatherToken); err != nil {
 		log.Println(err)
