@@ -8,6 +8,9 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"time"
+
+	"github.com/go-co-op/gocron"
 )
 
 type WeatherForecast struct {
@@ -23,6 +26,12 @@ type Summary struct {
 }
 
 func main() {
+	s := gocron.NewScheduler(time.UTC)
+	s.Every(1).Day().At("08:15").Do(run)
+	s.StartBlocking()
+}
+
+func run() {
 	var err error
 	var currentForecast WeatherForecast
 
@@ -41,7 +50,6 @@ func main() {
 	if err = sendMessage(currentForecast.Summary.Phrase, telegramToken, chat_id); err != nil {
 		log.Println(err)
 	}
-
 }
 
 func sendMessage(message string, token string, chat_id string) (err error) {
