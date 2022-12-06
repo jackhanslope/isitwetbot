@@ -2,7 +2,10 @@ module github.com/jackhanslope/isitwetbot
 
 go 1.19
 
-require github.com/go-co-op/gocron v1.18.0
+require (
+	github.com/caarlos0/env/v6 v6.10.1
+	github.com/go-co-op/gocron v1.18.0
+)
 
 require (
 	github.com/robfig/cron/v3 v3.0.1 // indirect

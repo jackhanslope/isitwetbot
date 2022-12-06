@@ -7,9 +7,9 @@ import (
 	"log"
 	"net/http"
 	"net/url"
-	"os"
 	"time"
 
+	"github.com/caarlos0/env/v6"
 	"github.com/go-co-op/gocron"
 )
 
@@ -25,31 +25,40 @@ type Summary struct {
 	TypeId int
 }
 
+type Config struct {
+	TelegramToken    string `env:"TELEGRAM_TOKEN,notEmpty"`
+	ChatId           string `env:"CHAT_ID,notEmpty"`
+	AccuweatherToken string `env:"ACCUWEATHER_TOKEN,notEmpty"`
+	WeatherUrl       string `env:"WEATHER_URL" envDefault:"http://dataservice.accuweather.com/forecasts/v1/minute?"`
+}
+
 func main() {
+	conf, err := loadConfig()
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	s := gocron.NewScheduler(time.UTC)
-	s.Every(1).Day().At("08:15").Do(run)
+	s.Every(1).Day().At("08:15").Do(run, conf)
 	s.StartBlocking()
 }
 
-func run() {
+func run(conf Config) {
 	var err error
 	var currentForecast WeatherForecast
 
-	telegramToken := os.Getenv("TELEGRAM_TOKEN")
-	chatId := os.Getenv("CHAT_ID")
-	accuweatherToken := os.Getenv("ACCUWEATHER_TOKEN")
-	weatherUrl, ok := os.LookupEnv("WEATHER_URL")
-	if !ok {
-		weatherUrl = "http://dataservice.accuweather.com/forecasts/v1/minute?"
-	}
-
-	if currentForecast, err = getWeather(weatherUrl, accuweatherToken); err != nil {
+	if currentForecast, err = getWeather(conf.WeatherUrl, conf.AccuweatherToken); err != nil {
 		log.Println(err)
 	}
 
-	if err = sendMessage(currentForecast.Summary.Phrase, telegramToken, chatId); err != nil {
+	if err = sendMessage(currentForecast.Summary.Phrase, conf.TelegramToken, conf.ChatId); err != nil {
 		log.Println(err)
 	}
+}
+
+func loadConfig() (conf Config, err error) {
+	err = env.Parse(&conf)
+	return
 }
 
 func sendMessage(message string, token string, chatId string) (err error) {
