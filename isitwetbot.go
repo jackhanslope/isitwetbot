@@ -26,10 +26,10 @@ type Summary struct {
 }
 
 type Config struct {
-	TelegramToken    string `env:"TELEGRAM_TOKEN,notEmpty"`
-	ChatId           string `env:"CHAT_ID,notEmpty"`
-	AccuweatherToken string `env:"ACCUWEATHER_TOKEN,notEmpty"`
-	WeatherUrl       string `env:"WEATHER_URL" envDefault:"http://dataservice.accuweather.com/forecasts/v1/minute?"`
+	TelegramToken    string   `env:"TELEGRAM_TOKEN,notEmpty"`
+	ChatIds          []string `env:"CHAT_IDS,notEmpty"`
+	AccuweatherToken string   `env:"ACCUWEATHER_TOKEN,notEmpty"`
+	WeatherUrl       string   `env:"WEATHER_URL" envDefault:"http://dataservice.accuweather.com/forecasts/v1/minute?"`
 }
 
 func main() {
@@ -51,8 +51,10 @@ func run(conf Config) {
 		log.Println(err)
 	}
 
-	if err = sendMessage(currentForecast.Summary.Phrase, conf.TelegramToken, conf.ChatId); err != nil {
-		log.Println(err)
+	for _, chatId := range conf.ChatIds {
+		if err = sendMessage(currentForecast.Summary.Phrase, conf.TelegramToken, chatId); err != nil {
+			log.Println(err)
+		}
 	}
 }
 
