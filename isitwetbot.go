@@ -53,6 +53,7 @@ func run() {
 }
 
 func sendMessage(message string, token string, chat_id string) (err error) {
+	log.Printf("Sending message to %v", chat_id)
 	messageUrl := fmt.Sprintf("https://api.telegram.org/bot%s/sendMessage?", token)
 	v := url.Values{}
 	v.Set("chat_id", chat_id)
@@ -63,6 +64,7 @@ func sendMessage(message string, token string, chat_id string) (err error) {
 }
 
 func getWeather(weatherUrl string, token string) (currentForecast WeatherForecast, err error) {
+	log.Printf("Fetching weather from %v\n", weatherUrl)
 	v := url.Values{}
 	v.Set("q", "51.46,-2.6")
 	v.Set("apikey", token)
