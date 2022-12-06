@@ -59,6 +59,7 @@ func run(conf Config) {
 }
 
 func loadConfig() (conf Config, err error) {
+	log.Println("Loading config")
 	err = env.Parse(&conf)
 	return
 }
