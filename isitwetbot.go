@@ -73,18 +73,15 @@ func getWeather(weatherUrl string, token string) (currentForecast WeatherForecas
 	if err != nil {
 		return
 	}
-
 	if respCode := resp.StatusCode; respCode >= 400 {
-		err = fmt.Errorf("Error with API: HTTP code = %v", respCode)
+		err = fmt.Errorf("Error with API: HTTP code = %v\n", respCode)
 	}
 
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
-
 	if err != nil {
 		return
 	}
-
 	err = json.Unmarshal(body, &currentForecast)
 
 	return
