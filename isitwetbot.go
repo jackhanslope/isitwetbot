@@ -36,7 +36,7 @@ func run() {
 	var currentForecast WeatherForecast
 
 	telegramToken := os.Getenv("TELEGRAM_TOKEN")
-	chat_id := os.Getenv("CHAT_ID")
+	chatId := os.Getenv("CHAT_ID")
 	accuweatherToken := os.Getenv("ACCUWEATHER_TOKEN")
 	weatherUrl, ok := os.LookupEnv("WEATHER_URL")
 	if !ok {
@@ -47,16 +47,16 @@ func run() {
 		log.Println(err)
 	}
 
-	if err = sendMessage(currentForecast.Summary.Phrase, telegramToken, chat_id); err != nil {
+	if err = sendMessage(currentForecast.Summary.Phrase, telegramToken, chatId); err != nil {
 		log.Println(err)
 	}
 }
 
-func sendMessage(message string, token string, chat_id string) (err error) {
-	log.Printf("Sending message to %v", chat_id)
+func sendMessage(message string, token string, chatId string) (err error) {
+	log.Printf("Sending message to %v", chatId)
 	messageUrl := fmt.Sprintf("https://api.telegram.org/bot%s/sendMessage?", token)
 	v := url.Values{}
-	v.Set("chat_id", chat_id)
+	v.Set("chat_id", chatId)
 	v.Set("text", message)
 	messageUrl += v.Encode()
 	_, err = http.Get(messageUrl)
