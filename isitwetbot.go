@@ -43,6 +43,9 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	scheduler.StartAsync()
+	nextRun := job.NextRun()
+	log.Println("Next run at", nextRun.Format("15:04:05 on Mon 02 Jan 2006"))
 	scheduler.StartBlocking()
 }
 
