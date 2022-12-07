@@ -39,7 +39,10 @@ func main() {
 	}
 
 	scheduler := gocron.NewScheduler(time.UTC)
-	scheduler.Every(1).Day().At("08:15").Do(run, conf)
+	job, err := scheduler.Every(1).Day().At("08:15").Do(run, conf)
+	if err != nil {
+		log.Fatal(err)
+	}
 	scheduler.StartBlocking()
 }
 
