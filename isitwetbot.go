@@ -38,9 +38,9 @@ func main() {
 		log.Fatal(err)
 	}
 
-	s := gocron.NewScheduler(time.UTC)
-	s.Every(1).Day().At("08:15").Do(run, conf)
-	s.StartBlocking()
+	scheduler := gocron.NewScheduler(time.UTC)
+	scheduler.Every(1).Day().At("08:15").Do(run, conf)
+	scheduler.StartBlocking()
 }
 
 func run(conf Config) {
