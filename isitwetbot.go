@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"strings"
 	"sync"
 	"time"
 
@@ -40,6 +41,7 @@ type Config struct {
 	ChatId           int64  `env:"CHAT_ID,notEmpty"`
 	AccuweatherToken string `env:"ACCUWEATHER_TOKEN,notEmpty"`
 	WeatherUrl       string `env:"WEATHER_URL" envDefault:"http://dataservice.accuweather.com/forecasts/v1/minute?"`
+	NtfyTopic        string `env:"NTFY_TOPIC,notEmpty"`
 }
 
 func main() {
@@ -76,7 +78,18 @@ func responderAgent(teleSettings tele.Settings, conf Config) (err error) {
 	bot.Handle("/weather", func(context tele.Context) (err error) {
 		user := context.Sender()
 		if user.ID != conf.ChatId {
-			log.Printf("Unauthorized attempted access from user: %s", user.Username)
+			unauthString := fmt.Sprintf("Unauthorized attempted access from user: %s", user.Username)
+
+			log.Printf(unauthString)
+
+			req, _ := http.NewRequest(
+				"POST",
+				fmt.Sprintf("https://ntfy.sh/%s", conf.NtfyTopic),
+				strings.NewReader(unauthString),
+			)
+			req.Header.Set("Title", "isitwetbot")
+			http.DefaultClient.Do(req)
+
 			return context.Send("You are not authorized to use this bot.")
 		} else {
 			log.Printf("Weather requested from authorized user %s", user.Username)
